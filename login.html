@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Вход в аккаунт</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="form-container">
+                <h1><i class="fas fa-sign-in-alt"></i> ВХОД В АККАУНТ</h1>
+                
+                <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                <form id="loginForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" placeholder="ivan@mail.ru" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Пароль</label>
+                        <input type="password" id="password" placeholder="Введите пароль" required>
+                    </div>
+
+                    <div class="form-footer" style="margin-bottom: 20px; text-align: right;">
+                        <a href="forgot-password.html">Забыли пароль?</a>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="loginBtn">
+                        <i class="fas fa-sign-in-alt"></i> ВОЙТИ
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    Нет аккаунта? <a href="register.html">ЗАРЕГИСТРИРОВАТЬСЯ</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value;
+            const btn = document.getElementById('loginBtn');
+            
+            if (!email || !password) {
+                showAlert('Заполните все поля', 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ВХОД...';
+            
+            try {
+                const user = await auth.login(email, password);
+                showAlert('Вход выполнен успешно!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                showAlert(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-sign-in-alt"></i> ВОЙТИ';
+            }
+        });
+    </script>
+</body>
+</html>

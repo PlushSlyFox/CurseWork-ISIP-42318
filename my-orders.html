@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Мои заказы</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .compact-order-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 16px;
+            padding: 16px 20px;
+            margin-bottom: 12px;
+            border: 1px solid rgba(255, 215, 0, 0.15);
+            transition: var(--transition);
+        }
+        
+        .compact-order-card:hover {
+            border-color: var(--yellow-main);
+            background: rgba(255, 215, 0, 0.02);
+        }
+        
+        .order-header-compact {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        
+        .order-id {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--yellow-main);
+        }
+        
+        .order-price-compact {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--yellow-main);
+        }
+        
+        .order-route-compact {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+        
+        .route-point {
+            color: var(--text-white);
+        }
+        
+        .route-arrow {
+            color: var(--yellow-main);
+        }
+        
+        .order-details-compact {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        
+        .detail-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-gray);
+        }
+        
+        .detail-item i {
+            color: var(--yellow-main);
+            width: 16px;
+            font-size: 12px;
+        }
+        
+        .order-status-compact {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        
+        .order-actions-compact {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 215, 0, 0.1);
+        }
+        
+        .btn-small {
+            padding: 6px 14px;
+            font-size: 12px;
+        }
+        
+        .carrier-info {
+            background: rgba(76, 175, 80, 0.08);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 10px;
+            font-size: 12px;
+        }
+        
+        .carrier-info i {
+            color: var(--success);
+        }
+        
+        @media (max-width: 768px) {
+            .compact-order-card {
+                padding: 12px 15px;
+            }
+            
+            .order-header-compact {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <h1 style="margin: 30px 0 20px 0; font-size: 28px;"><i class="fas fa-list"></i> Мои заказы</h1>
+            
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+            
+            <div id="loadingIndicator" style="text-align: center; padding: 50px;">
+                <div class="loader"></div>
+                <p>Загрузка заказов...</p>
+            </div>
+            
+            <div id="ordersContainer" style="display: none;"></div>
+            
+            <div id="emptyContainer" class="empty-state" style="display: none;">
+                <i class="fas fa-truck"></i>
+                <h3>У вас пока нет заказов</h3>
+                <p id="emptyMessage">Создайте первый заказ прямо сейчас!</p>
+                <a href="create-order.html" id="createOrderLink" class="btn btn-primary" style="margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Создать заявку
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        async function loadMyOrders() {
+            const loadingDiv = document.getElementById('loadingIndicator');
+            const ordersDiv = document.getElementById('ordersContainer');
+            const emptyDiv = document.getElementById('emptyContainer');
+            
+            try {
+                await db.init();
+                
+                const user = auth.getCurrentUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                let orders = [];
+                if (user.role === 'customer') {
+                    orders = await db.getOrdersByCustomer(user.id);
+                    document.getElementById('emptyMessage').textContent = 'Создайте первый заказ прямо сейчас!';
+                    document.getElementById('createOrderLink').style.display = 'inline-flex';
+                } else {
+                    orders = await db.getOrdersByCarrier(user.id);
+                    document.getElementById('emptyMessage').textContent = 'Нет принятых заказов. Перейдите в раздел "Доступные заказы"';
+                    document.getElementById('createOrderLink').style.display = 'none';
+                }
+                
+                loadingDiv.style.display = 'none';
+                
+                if (!orders || orders.length === 0) {
+                    ordersDiv.style.display = 'none';
+                    emptyDiv.style.display = 'block';
+                    return;
+                }
+                
+                ordersDiv.style.display = 'block';
+                emptyDiv.style.display = 'none';
+                
+                let html = '';
+                
+                for (const order of orders) {
+                    const customer = await db.getUserById(order.customerId);
+                    const carrier = order.carrierId ? await db.getUserById(order.carrierId) : null;
+                    
+                    const statusText = {
+                        'pending': 'Ожидает перевозчика',
+                        'in_progress': 'В пути',
+                        'completed': 'Завершен',
+                        'cancelled': 'Отменен'
+                    }[order.status] || order.status;
+                    
+                    const statusColor = {
+                        'pending': '#ffc107',
+                        'in_progress': '#2196f3',
+                        'completed': '#4caf50',
+                        'cancelled': '#f44336'
+                    }[order.status] || '#fff';
+                    
+                    const vehicleText = {
+                        'gas': 'Газель',
+                        'small_truck': 'ЗИЛ/Бычок',
+                        'large_truck': 'Фура'
+                    }[order.vehicle] || order.vehicle;
+                    
+                    html += `
+                        <div class="compact-order-card">
+                            <div class="order-header-compact">
+                                <div>
+                                    <span class="order-id">Заказ #${order.id}</span>
+                                    <span class="order-status-compact" style="background: ${statusColor}20; color: ${statusColor}; margin-left: 10px;">${statusText}</span>
+                                </div>
+                                <div class="order-price-compact">${order.price.toLocaleString('ru-RU')} ₽</div>
+                            </div>
+                            
+                            <div class="order-route-compact">
+                                <span class="route-point">${order.pickup.length > 30 ? order.pickup.substring(0, 30) + '...' : order.pickup}</span>
+                                <i class="fas fa-arrow-right route-arrow"></i>
+                                <span class="route-point">${order.delivery.length > 30 ? order.delivery.substring(0, 30) + '...' : order.delivery}</span>
+                            </div>
+                            
+                            <div class="order-details-compact">
+                                <span class="detail-item"><i class="fas fa-weight-hanging"></i> ${order.weight} кг</span>
+                                <span class="detail-item"><i class="fas fa-truck"></i> ${vehicleText}</span>
+                                <span class="detail-item"><i class="fas fa-calendar"></i> ${new Date(order.createdAt).toLocaleDateString('ru-RU')}</span>
+                            </div>
+                            
+                            ${carrier && user.role === 'customer' ? `
+                            <div class="carrier-info">
+                                <i class="fas fa-truck"></i> <strong>Перевозчик:</strong> ${carrier.name} | 
+                                <i class="fas fa-phone"></i> ${carrier.phone} | 
+                                <i class="fas fa-envelope"></i> ${carrier.email}
+                            </div>
+                            ` : ''}
+                            
+                            ${customer && user.role === 'carrier' && order.status !== 'pending' ? `
+                            <div class="carrier-info">
+                                <i class="fas fa-user"></i> <strong>Заказчик:</strong> ${customer.name} | 
+                                <i class="fas fa-phone"></i> ${customer.phone} | 
+                                <i class="fas fa-envelope"></i> ${customer.email}
+                            </div>
+                            ` : ''}
+                            
+                            <div class="order-actions-compact">
+                                ${order.status === 'in_progress' && user.role === 'carrier' ? `
+                                <button onclick="completeOrder(${order.id})" class="btn btn-primary btn-small">
+                                    <i class="fas fa-check-circle"></i> Завершить
+                                </button>
+                                ` : ''}
+                                ${order.status === 'pending' && user.role === 'customer' ? `
+                                <button onclick="cancelMyOrder(${order.id})" class="btn btn-danger btn-small">
+                                    <i class="fas fa-times"></i> Отменить
+                                </button>
+                                ` : ''}
+                                <button onclick="viewOrderDetails(${order.id})" class="btn btn-outline btn-small">
+                                    <i class="fas fa-eye"></i> Детали
+                                </button>
+                            </div>
+                        </div>
+                    `;
+                }
+                
+                ordersDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Load orders error:', error);
+                loadingDiv.style.display = 'none';
+                showAlert('Ошибка при загрузке заказов: ' + error.message, 'error');
+                emptyDiv.style.display = 'block';
+                emptyDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Ошибка загрузки</h3>
+                    <p>Не удалось загрузить заказы. Попробуйте обновить страницу.</p>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-sync"></i> Обновить
+                    </button>
+                `;
+            }
+        }
+        
+        async function completeOrder(orderId) {
+            if (confirm('Подтвердите завершение заказа?')) {
+                try {
+                    await db.completeOrder(orderId);
+                    showAlert('Заказ завершен!', 'success');
+                    await loadMyOrders();
+                } catch (error) {
+                    showAlert('Ошибка: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        async function cancelMyOrder(orderId) {
+            if (confirm('Отменить заказ?')) {
+                try {
+                    await db.cancelOrder(orderId);
+                    showAlert('Заказ отменен', 'success');
+                    await loadMyOrders();
+                } catch (error) {
+                    showAlert('Ошибка: ' + error.message, 'error');
+                }
+            }
+        }
+        
+        async function viewOrderDetails(orderId) {
+            try {
+                const order = await db.getOrderById(orderId);
+                if (order) {
+                    const customer = await db.getUserById(order.customerId);
+                    const carrier = order.carrierId ? await db.getUserById(order.carrierId) : null;
+                    
+                    let message = `📦 ЗАКАЗ #${order.id}\n\n`;
+                    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                    message += `📍 Откуда: ${order.pickup}\n`;
+                    message += `🎯 Куда: ${order.delivery}\n`;
+                    message += `⚖️ Вес: ${order.weight} кг\n`;
+                    message += `💰 Цена: ${order.price.toLocaleString('ru-RU')} ₽\n`;
+                    message += `📊 Статус: ${order.status}\n`;
+                    message += `📝 Описание: ${order.description || 'Нет'}\n`;
+                    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                    message += `👤 Заказчик: ${customer.name}\n`;
+                    message += `📧 Email: ${customer.email}\n`;
+                    message += `📞 Телефон: ${customer.phone}\n`;
+                    if (carrier) {
+                        message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                        message += `🚛 Перевозчик: ${carrier.name}\n`;
+                        message += `📞 Телефон: ${carrier.phone}\n`;
+                        message += `📧 Email: ${carrier.email}\n`;
+                    }
+                    message += `━━━━━━━━━━━━━━━━━━━━\n`;
+                    message += `📅 Создан: ${new Date(order.createdAt).toLocaleString('ru-RU')}`;
+                    
+                    alert(message);
+                } else {
+                    showAlert('Заказ не найден', 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка при загрузке деталей', 'error');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            setTimeout(() => {
+                loadMyOrders();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

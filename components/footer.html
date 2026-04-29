@@ -1,0 +1,209 @@
+<footer>
+    <div class="container">
+        <div class="footer-content">
+            <div class="footer-section">
+                <div class="footer-logo">
+                    <i class="fas fa-truck"></i>
+                    <span>БГП по РФ</span>
+                </div>
+                <p>Быстрые и надежные грузоперевозки по всей России. Работаем 24/7.</p>
+                <div class="security-badges">
+                    <div class="security-badge-small">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>SSL 256-bit</span>
+                    </div>
+                    <div class="security-badge-small">
+                        <i class="fas fa-lock"></i>
+                        <span>Шифрование</span>
+                    </div>
+                    <div class="security-badge-small">
+                        <i class="fas fa-check-circle"></i>
+                        <span>Защита данных</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="footer-section">
+                <h4>О компании</h4>
+                <ul>
+                    <li><a href="about.html"><i class="fas fa-info-circle"></i> О нас</a></li>
+                    <li><a href="contact.html"><i class="fas fa-envelope"></i> Контакты</a></li>
+                    <li><a href="help.html"><i class="fas fa-question-circle"></i> Помощь</a></li>
+                    <li><a href="feedback.html"><i class="fas fa-comment"></i> Обратная связь</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Документы</h4>
+                <ul>
+                    <li><a href="privacy.html"><i class="fas fa-user-secret"></i> Политика конфиденциальности</a></li>
+                    <li><a href="consent.html"><i class="fas fa-file-signature"></i> Согласие на обработку ПД</a></li>
+                    <li><a href="terms.html"><i class="fas fa-gavel"></i> Пользовательское соглашение</a></li>
+                </ul>
+            </div>
+
+            <div class="footer-section">
+                <h4>Контакты</h4>
+                <div class="contact-info">
+                    <p><i class="fas fa-phone"></i> <a href="tel:+78005553535">8 (800) 555-35-35</a></p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:info@bgp-rf.ru">info@bgp-rf.ru</a></p>
+                    <p><i class="fas fa-map-marker-alt"></i> г. Москва, ул. Тверская, д. 15</p>
+                    <p><i class="fas fa-clock"></i> 24/7</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="footer-bottom">
+            <div class="certification">
+                <span>© 2025 БГП по РФ. Все права защищены.</span>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .footer-content {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 30px;
+            padding: 40px 0;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.2);
+        }
+
+        .footer-section h4 {
+            color: var(--yellow-main);
+            margin-bottom: 20px;
+            font-size: 16px;
+        }
+
+        .footer-section ul {
+            list-style: none;
+        }
+
+        .footer-section ul li {
+            margin-bottom: 10px;
+        }
+
+        .footer-section ul li a {
+            color: var(--text-gray);
+            text-decoration: none;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .footer-section ul li a:hover {
+            color: var(--yellow-main);
+            transform: translateX(5px);
+        }
+
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .footer-logo i {
+            font-size: 28px;
+            color: var(--yellow-main);
+        }
+
+        .footer-logo span {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--yellow-main);
+        }
+
+        .footer-section > p {
+            color: var(--text-gray);
+            font-size: 13px;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .security-badges {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .security-badge-small {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(76, 175, 80, 0.12);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            border-left: 2px solid var(--success);
+        }
+
+        .security-badge-small i {
+            font-size: 12px;
+            color: var(--success);
+        }
+
+        .security-badge-small span {
+            color: var(--text-gray);
+        }
+
+        .contact-info p {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+
+        .contact-info i {
+            color: var(--yellow-main);
+            width: 16px;
+            font-size: 12px;
+        }
+
+        .contact-info a {
+            color: var(--text-gray);
+            text-decoration: none;
+        }
+
+        .contact-info a:hover {
+            color: var(--yellow-main);
+        }
+
+        .footer-bottom {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px 0;
+            text-align: center;
+        }
+
+        .certification span {
+            color: var(--text-gray);
+            font-size: 12px;
+        }
+
+        @media (max-width: 768px) {
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 25px;
+                text-align: center;
+            }
+            
+            .security-badges {
+                justify-content: center;
+            }
+            
+            .contact-info p {
+                justify-content: center;
+            }
+            
+            .footer-section ul li a {
+                justify-content: center;
+            }
+        }
+    </style>
+</footer>

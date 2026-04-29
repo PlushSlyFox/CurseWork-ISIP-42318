@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Помощь - БГП по РФ</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .faq-section {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+            margin: 30px 0;
+        }
+        .faq-item {
+            margin-bottom: 20px;
+            border-bottom: 1px solid rgba(255, 215, 0, 0.1);
+            padding-bottom: 15px;
+        }
+        .faq-question {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--yellow-main);
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .faq-answer {
+            margin-top: 10px;
+            color: var(--text-gray);
+            display: none;
+            padding-left: 20px;
+        }
+        .faq-answer.show {
+            display: block;
+        }
+        .help-category {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin: 30px 0;
+        }
+        .help-card {
+            background: rgba(255, 215, 0, 0.05);
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+        .help-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 215, 0, 0.1);
+        }
+        .help-card i {
+            font-size: 40px;
+            color: var(--yellow-main);
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <h1 style="text-align: center; margin: 30px 0;"><i class="fas fa-question-circle"></i> Центр помощи</h1>
+
+            <div class="help-category">
+                <div class="help-card" onclick="scrollToFaq('for-customers')">
+                    <i class="fas fa-user"></i>
+                    <h3>Для заказчиков</h3>
+                </div>
+                <div class="help-card" onclick="scrollToFaq('for-carriers')">
+                    <i class="fas fa-truck"></i>
+                    <h3>Для перевозчиков</h3>
+                </div>
+                <div class="help-card" onclick="scrollToFaq('payment')">
+                    <i class="fas fa-credit-card"></i>
+                    <h3>Оплата и цены</h3>
+                </div>
+                <div class="help-card" onclick="scrollToFaq('technical')">
+                    <i class="fas fa-laptop"></i>
+                    <h3>Технические вопросы</h3>
+                </div>
+            </div>
+
+            <div id="for-customers" class="faq-section">
+                <h2><i class="fas fa-user"></i> Для заказчиков</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Как создать заказ? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Чтобы создать заказ, необходимо авторизоваться на сайте, затем перейти в раздел "Создать заявку", заполнить все поля (адреса, вес груза, тип транспорта) и нажать кнопку "Создать заявку". Цена рассчитается автоматически.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Как долго ждать перевозчика? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Обычно перевозчик откликается в течение 15-30 минут после создания заказа. Вы получите уведомление на email и в личный кабинет.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Что делать, если перевозчик не отвечает? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Свяжитесь с нашей службой поддержки по телефону 8 (800) 555-35-35. Мы поможем найти другого перевозчика.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Могу ли я отменить заказ? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Да, вы можете отменить заказ до того, как перевозчик его принял. Для этого перейдите в "Мои заказы" и нажмите "Отменить".</div>
+                </div>
+            </div>
+
+            <div id="for-carriers" class="faq-section">
+                <h2><i class="fas fa-truck"></i> Для перевозчиков</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Как стать перевозчиком? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Зарегистрируйтесь на сайте и выберите роль "Перевозчик". После подтверждения данных вы сможете просматривать доступные заказы.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Как получить оплату за заказ? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Оплата переводится на ваш счет после подтверждения выполнения заказа заказчиком. Деньги поступают в течение 3-5 рабочих дней.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Что делать, если заказчик отказывается платить? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Свяжитесь с поддержкой. Мы проверяем всех пользователей и решаем спорные ситуации в пользу добросовестной стороны.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Есть ли комиссия за заказы? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Да, комиссия сервиса составляет 10% от стоимости заказа. Эти средства идут на поддержку платформы и страховку грузов.</div>
+                </div>
+            </div>
+
+            <div id="payment" class="faq-section">
+                <h2><i class="fas fa-credit-card"></i> Оплата и цены</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Как рассчитывается цена? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Цена зависит от расстояния, веса груза и типа транспорта. Вы можете увидеть предварительную стоимость сразу после заполнения формы.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Какие способы оплаты доступны? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Мы принимаем оплату банковскими картами (Visa, Mastercard, МИР), через СБП, а также наличными перевозчику по договоренности.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Нужно ли платить предоплату? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Нет, вы платите только после выполнения заказа. Никаких скрытых платежей и предоплат!</div>
+                </div>
+            </div>
+
+            <div id="technical" class="faq-section">
+                <h2><i class="fas fa-laptop"></i> Технические вопросы</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Не приходит письмо с подтверждением регистрации 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Проверьте папку "Спам" в вашей почте. Если письма нет - свяжитесь с поддержкой.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Сайт работает медленно 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Попробуйте очистить кэш браузера или использовать другой браузер. Если проблема повторяется - сообщите нам.</div>
+                </div>
+
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        Безопасны ли мои данные? 
+                        <i class="fas fa-chevron-down"></i>
+                    </div>
+                    <div class="faq-answer">Да, все данные передаются по защищенному SSL-соединению. Мы используем шифрование 256-bit.</div>
+                </div>
+            </div>
+
+            <div class="contact-card" style="margin: 40px 0; text-align: center;">
+                <h2><i class="fas fa-headset"></i> Не нашли ответ?</h2>
+                <p>Свяжитесь с нашей службой поддержки. Мы работаем 24/7!</p>
+                <div style="margin-top: 20px;">
+                    <a href="tel:+78005553535" class="btn btn-primary"><i class="fas fa-phone"></i> 8 (800) 555-35-35</a>
+                    <a href="feedback.html" class="btn btn-outline"><i class="fas fa-comment"></i> Написать сообщение</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function toggleFaq(element) {
+            const answer = element.nextElementSibling;
+            answer.classList.toggle('show');
+            const icon = element.querySelector('i');
+            if (answer.classList.contains('show')) {
+                icon.style.transform = 'rotate(180deg)';
+            } else {
+                icon.style.transform = 'rotate(0deg)';
+            }
+        }
+
+        function scrollToFaq(id) {
+            document.getElementById(id).scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

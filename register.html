@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Регистрация</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="form-container">
+                <h1><i class="fas fa-user-plus"></i> РЕГИСТРАЦИЯ</h1>
+                
+                <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                <form id="registerForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Имя и фамилия</label>
+                        <input type="text" id="name" placeholder="Иван Петров" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email</label>
+                        <input type="email" id="email" placeholder="ivan@mail.ru" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-phone"></i> Телефон</label>
+                        <input type="tel" id="phone" placeholder="+7 (999) 999-99-99" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Пароль</label>
+                        <input type="password" id="password" placeholder="Минимум 6 символов" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-lock"></i> Подтвердите пароль</label>
+                        <input type="password" id="confirmPassword" placeholder="Введите пароль еще раз" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-user-tag"></i> Выберите кем вы являетесь</label>
+                        <select id="role" required>
+                            <option value="customer">🚚 Заказчик (нужна машина)</option>
+                            <option value="carrier">🚛 Перевозчик (есть машина)</option>
+                        </select>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="registerBtn">
+                        <i class="fas fa-check"></i> ЗАРЕГИСТРИРОВАТЬСЯ
+                    </button>
+                </form>
+
+                <div class="form-footer">
+                    Уже есть аккаунт? <a href="login.html">ВОЙТИ</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const formData = {
+                name: document.getElementById('name').value.trim(),
+                email: document.getElementById('email').value.trim(),
+                phone: document.getElementById('phone').value.trim(),
+                password: document.getElementById('password').value,
+                confirmPassword: document.getElementById('confirmPassword').value,
+                role: document.getElementById('role').value
+            };
+            
+            if (!formData.name || !formData.email || !formData.phone || !formData.password) {
+                showAlert('Заполните все поля', 'error');
+                return;
+            }
+            
+            if (formData.password !== formData.confirmPassword) {
+                showAlert('Пароли не совпадают', 'error');
+                return;
+            }
+            
+            if (formData.password.length < 6) {
+                showAlert('Пароль должен быть не менее 6 символов', 'error');
+                return;
+            }
+            
+            const btn = document.getElementById('registerBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> РЕГИСТРАЦИЯ...';
+            
+            try {
+                await auth.register(formData);
+                showAlert('Регистрация успешна!', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+            } catch (error) {
+                showAlert(error.message, 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-check"></i> ЗАРЕГИСТРИРОВАТЬСЯ';
+            }
+        });
+    </script>
+</body>
+</html>

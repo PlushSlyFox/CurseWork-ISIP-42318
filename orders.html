@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Мои заказы</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <h1 style="margin: 30px 0 20px 0;"><i class="fas fa-list"></i> Мои заказы</h1>
+            
+            <div id="alertMessage" class="alert" style="display: none;"></div>
+            
+            <div id="loadingIndicator" style="text-align: center; padding: 50px;">
+                <div class="loader"></div>
+                <p>Загрузка заказов...</p>
+            </div>
+            
+            <div id="ordersContainer" class="orders-list" style="display: none;"></div>
+            
+            <div id="emptyContainer" class="empty-state" style="display: none;">
+                <i class="fas fa-truck"></i>
+                <h3>У вас пока нет заказов</h3>
+                <p>Создайте первый заказ прямо сейчас!</p>
+                <a href="create-order.html" class="btn btn-primary" style="margin-top: 20px;">
+                    <i class="fas fa-plus"></i> Создать заявку
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        async function loadOrders() {
+            const loadingDiv = document.getElementById('loadingIndicator');
+            const ordersDiv = document.getElementById('ordersContainer');
+            const emptyDiv = document.getElementById('emptyContainer');
+            
+            try {
+                await db.init();
+                
+                const user = auth.getCurrentUser();
+                if (!user) {
+                    window.location.href = 'login.html';
+                    return;
+                }
+                
+                const orders = await db.getOrdersByCustomer(user.id);
+                console.log('Orders found:', orders);
+                
+                loadingDiv.style.display = 'none';
+                
+                if (!orders || orders.length === 0) {
+                    ordersDiv.style.display = 'none';
+                    emptyDiv.style.display = 'block';
+                    return;
+                }
+                
+                ordersDiv.style.display = 'block';
+                emptyDiv.style.display = 'none';
+                
+                let html = `
+                    <div class="orders-table">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="background: rgba(255,215,0,0.1);">
+                                    <th style="padding: 15px; text-align: left;">№</th>
+                                    <th style="padding: 15px; text-align: left;">Откуда</th>
+                                    <th style="padding: 15px; text-align: left;">Куда</th>
+                                    <th style="padding: 15px; text-align: left;">Вес (кг)</th>
+                                    <th style="padding: 15px; text-align: left;">Цена (₽)</th>
+                                    <th style="padding: 15px; text-align: left;">Статус</th>
+                                    <th style="padding: 15px; text-align: left;">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                `;
+                
+                for (const order of orders) {
+                    const statusText = {
+                        'new': 'Новая',
+                        'accepted': 'Принята',
+                        'in_progress': 'В пути',
+                        'completed': 'Завершена',
+                        'cancelled': 'Отменена'
+                    }[order.status] || order.status;
+                    
+                    const statusClass = `status-badge status-${order.status}`;
+                    
+                    html += `
+                        <tr style="border-bottom: 1px solid rgba(255,215,0,0.1);">
+                            <td style="padding: 15px;">${order.id}</td>
+                            <td style="padding: 15px;">${order.pickup.length > 25 ? order.pickup.substring(0, 25) + '...' : order.pickup}</td>
+                            <td style="padding: 15px;">${order.delivery.length > 25 ? order.delivery.substring(0, 25) + '...' : order.delivery}</td>
+                            <td style="padding: 15px;">${order.weight}</td>
+                            <td style="padding: 15px;">${order.price.toLocaleString('ru-RU')}</td>
+                            <td style="padding: 15px;"><span class="${statusClass}">${statusText}</span></td>
+                            <td style="padding: 15px;">
+                                ${order.status === 'new' ? 
+                                    `<button onclick="cancelOrder(${order.id})" class="btn btn-outline" style="padding: 5px 15px; font-size: 12px;">
+                                        <i class="fas fa-times"></i> Отменить
+                                    </button>` : 
+                                    `<button onclick="viewOrder(${order.id})" class="btn btn-outline" style="padding: 5px 15px; font-size: 12px;">
+                                        <i class="fas fa-eye"></i> Детали
+                                    </button>`
+                                }
+                            </td>
+                        </tr>
+                    `;
+                }
+                
+                html += `</tbody></table></div>`;
+                ordersDiv.innerHTML = html;
+                
+            } catch (error) {
+                console.error('Load orders error:', error);
+                loadingDiv.style.display = 'none';
+                showAlert('Ошибка при загрузке заказов', 'error');
+                emptyDiv.style.display = 'block';
+                emptyDiv.innerHTML = `
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Ошибка загрузки</h3>
+                    <p>Не удалось загрузить заказы. Попробуйте позже.</p>
+                    <button onclick="location.reload()" class="btn btn-primary" style="margin-top: 20px;">
+                        <i class="fas fa-sync"></i> Обновить
+                    </button>
+                `;
+            }
+        }
+        
+        async function cancelOrder(orderId) {
+            if (confirm('Вы уверены, что хотите отменить заказ?')) {
+                try {
+                    await db.updateOrder(orderId, { status: 'cancelled' });
+                    showAlert('Заказ отменен', 'success');
+                    await loadOrders();
+                } catch (error) {
+                    showAlert('Ошибка при отмене заказа', 'error');
+                }
+            }
+        }
+        
+        async function viewOrder(orderId) {
+            try {
+                const order = await db.getOrderById(orderId);
+                if (order) {
+                    alert(`📦 ЗАКАЗ #${order.id}\n\n━━━━━━━━━━━━━━━━━━━━\n📍 Откуда: ${order.pickup}\n🎯 Куда: ${order.delivery}\n⚖️ Вес: ${order.weight} кг\n💰 Цена: ${order.price.toLocaleString('ru-RU')} ₽\n📊 Статус: ${order.status}\n📝 Описание: ${order.description || 'Нет'}\n━━━━━━━━━━━━━━━━━━━━\n📅 Создан: ${new Date(order.createdAt).toLocaleString('ru-RU')}`);
+                } else {
+                    showAlert('Заказ не найден', 'error');
+                }
+            } catch (error) {
+                showAlert('Ошибка при загрузке деталей', 'error');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            loadOrders();
+        });
+    </script>
+</body>
+</html>

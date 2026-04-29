@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Грузовые перевозки по России</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="hero">
+                <h1><i class="fas fa-bolt"></i> ГРУЗОВЫЕ ПЕРЕВОЗКИ ПО РОССИИ</h1>
+                <p>Закажи машину за 2 минуты • Точный расчет • Без посредников</p>
+                <div class="hero-buttons">
+                    <a href="create-order.html" class="btn btn-primary"><i class="fas fa-rocket"></i> ЗАКАЗАТЬ</a>
+                    <a href="available-orders.html" class="btn btn-outline"><i class="fas fa-truck"></i> СТАТЬ ПЕРЕВОЗЧИКОМ</a>
+                </div>
+            </div>
+
+            <div class="features">
+                <h2><i class="fas fa-star"></i> ПОЧЕМУ МЫ?</h2>
+                <div class="features-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">⚡</div>
+                        <h3>БЫСТРО</h3>
+                        <p>Создание заявки за 2 минуты</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">💰</div>
+                        <h3>ЧЕСТНО</h3>
+                        <p>Никаких скрытых платежей</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🛡️</div>
+                        <h3>НАДЕЖНО</h3>
+                        <p>Все перевозчики проверены</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">📍</div>
+                        <h3>ТОЧНО</h3>
+                        <p>Работаем с точными адресами</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">🚛</div>
+                        <h3>ВСЕ МАШИНЫ</h3>
+                        <p>От газели до фуры</p>
+                    </div>
+                    <div class="feature-card">
+                        <div class="feature-icon">👊</div>
+                        <h3>ПОДДЕРЖКА</h3>
+                        <p>24/7 на связи</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats">
+                <div class="stat-card">
+                    <div class="stat-number" id="statPending">0</div>
+                    <div class="stat-label">АКТИВНЫХ ЗАКАЗОВ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statCompleted">0</div>
+                    <div class="stat-label">ВЫПОЛНЕННЫХ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="statCarriers">0</div>
+                    <div class="stat-label">ПЕРЕВОЗЧИКОВ</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number">24/7</div>
+                    <div class="stat-label">ПОДДЕРЖКА</div>
+                </div>
+            </div>
+
+            <div class="cta">
+                <h2>ГОТОВ ПЕРЕВЕЗТИ ГРУЗ?</h2>
+                <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
+                    <a href="create-order.html" class="btn btn-primary btn-large"><i class="fas fa-check"></i> ЗАКАЗАТЬ ПЕРЕВОЗКУ</a>
+                    <a href="available-orders.html" class="btn btn-outline btn-large"><i class="fas fa-truck"></i> СТАТЬ ПЕРЕВОЗЧИКОМ</a>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        async function updateStats() {
+            try {
+                await db.init();
+                const allOrders = await db.getAllOrders();
+                const pending = allOrders.filter(o => o.status === 'pending').length;
+                const completed = allOrders.filter(o => o.status === 'completed').length;
+                const carriers = await db.getUsersByRole('carrier');
+                
+                document.getElementById('statPending').textContent = pending;
+                document.getElementById('statCompleted').textContent = completed;
+                document.getElementById('statCarriers').textContent = carriers.length;
+            } catch (error) {
+                console.error('Stats error:', error);
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', () => {
+            updateStats();
+        });
+    </script>
+</body>
+</html>

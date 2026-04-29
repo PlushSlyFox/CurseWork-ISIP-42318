@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>О компании - БГП по РФ</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .about-content {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px 0;
+        }
+        .about-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .about-header h1 {
+            color: var(--yellow-main);
+            font-size: 42px;
+            margin-bottom: 20px;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin: 40px 0;
+        }
+        .stat-item {
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+        }
+        .stat-number {
+            font-size: 36px;
+            font-weight: 800;
+            color: var(--yellow-main);
+        }
+        .mission {
+            background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), transparent);
+            padding: 30px;
+            border-radius: 20px;
+            margin: 30px 0;
+        }
+        @media (max-width: 768px) {
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="about-content">
+                <div class="about-header">
+                    <h1><i class="fas fa-truck"></i> О компании "БГП по РФ"</h1>
+                    <p>Ваш надежный партнер в мире грузоперевозок с 2015 года</p>
+                </div>
+
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-number">10+</div>
+                        <div>лет на рынке</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">5000+</div>
+                        <div>выполненных заказов</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">200+</div>
+                        <div>партнеров-перевозчиков</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number">50+</div>
+                        <div>городов РФ</div>
+                    </div>
+                </div>
+
+                <div class="mission">
+                    <h2><i class="fas fa-bullseye"></i> Наша миссия</h2>
+                    <p>Сделать грузоперевозки по России быстрыми, прозрачными и доступными для каждого. Мы связываем заказчиков с надежными перевозчиками, исключая посредников и скрытые комиссии.</p>
+                </div>
+
+                <h2><i class="fas fa-history"></i> История компании</h2>
+                <p>Компания "БГП по РФ" основана в 2015 году группой профессионалов в области логистики. Начиная с небольшого автопарка в Москве, мы выросли до крупнейшей онлайн-платформы по поиску грузоперевозок. Сегодня мы помогаем тысячам клиентов ежедневно находить надежных перевозчиков по всей России.</p>
+
+                <h2><i class="fas fa-check-circle"></i> Наши преимущества</h2>
+                <ul>
+                    <li><strong>Прозрачность</strong> - Фиксированная цена без скрытых платежей</li>
+                    <li><strong>Безопасность</strong> - Все перевозчики проходят проверку</li>
+                    <li><strong>Быстрота</strong> - Заказ машины за 2 минуты</li>
+                    <li><strong>Поддержка 24/7</strong> - Оперативная помощь в любое время</li>
+                    <li><strong>Страховка груза</strong> - до 2 000 000 рублей</li>
+                </ul>
+
+                <h2><i class="fas fa-shield-alt"></i> Наши ценности</h2>
+                <ul>
+                    <li><strong>Честность</strong> - Мы всегда выполняем обещания</li>
+                    <li><strong>Клиентоориентированность</strong> - Вы всегда в центре внимания</li>
+                    <li><strong>Инновации</strong> - Внедряем современные технологии</li>
+                    <li><strong>Ответственность</strong> - Гарантируем качество услуг</li>
+                </ul>
+
+                <div class="mission">
+                    <h2><i class="fas fa-handshake"></i> Почему выбирают нас?</h2>
+                    <p>Более 5000 клиентов доверили нам свои перевозки. Мы предлагаем лучшие условия на рынке, надежный сервис и прозрачную систему ценообразования. Наша репутация - наша главная ценность.</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

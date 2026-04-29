@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Контакты - БГП по РФ</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 40px;
+            margin: 40px 0;
+        }
+        .contact-card {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 30px;
+        }
+        .contact-info-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 25px;
+            padding: 15px;
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+        }
+        .contact-info-item i {
+            font-size: 32px;
+            color: var(--yellow-main);
+        }
+        .map-container {
+            margin: 30px 0;
+            border-radius: 20px;
+            overflow: hidden;
+        }
+        .working-hours {
+            background: rgba(255, 215, 0, 0.05);
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        @media (max-width: 768px) {
+            .contact-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <h1 style="text-align: center; margin: 30px 0;"><i class="fas fa-address-card"></i> Контакты</h1>
+
+            <div class="contact-grid">
+                <div>
+                    <div class="contact-card">
+                        <h2><i class="fas fa-map-marker-alt"></i> Главный офис</h2>
+                        <div class="contact-info-item">
+                            <i class="fas fa-building"></i>
+                            <div>
+                                <strong>Адрес:</strong><br>
+                                г. Москва, ул. Тверская, д. 15, БЦ "Тверской", офис 501
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-phone"></i>
+                            <div>
+                                <strong>Телефон:</strong><br>
+                                <a href="tel:+78005553535">8 (800) 555-35-35</a> (бесплатно по РФ)<br>
+                                <a href="tel:+74951234567">+7 (495) 123-45-67</a> (Москва)
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-envelope"></i>
+                            <div>
+                                <strong>Email:</strong><br>
+                                <a href="mailto:info@bgp-rf.ru">info@bgp-rf.ru</a> - общие вопросы<br>
+                                <a href="mailto:support@bgp-rf.ru">support@bgp-rf.ru</a> - поддержка<br>
+                                <a href="mailto:partners@bgp-rf.ru">partners@bgp-rf.ru</a> - партнерам
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <div class="contact-card">
+                        <h2><i class="fas fa-clock"></i> Режим работы</h2>
+                        <div class="working-hours">
+                            <p><i class="fas fa-headset"></i> <strong>Колл-центр:</strong> 24/7, без выходных</p>
+                            <p><i class="fas fa-building"></i> <strong>Офис:</strong> ПН-ПТ: 09:00 - 20:00</p>
+                            <p><i class="fas fa-truck"></i> <strong>Служба доставки:</strong> 24/7</p>
+                            <p><i class="fas fa-chart-line"></i> <strong>Отдел развития:</strong> ПН-ПТ: 10:00 - 18:00</p>
+                        </div>
+                        
+                        <h2 style="margin-top: 30px;"><i class="fas fa-globe"></i> Региональные представительства</h2>
+                        <div class="contact-info-item">
+                            <i class="fas fa-city"></i>
+                            <div>
+                                <strong>Санкт-Петербург:</strong><br>
+                                Невский пр., д. 28, тел: +7 (812) 123-45-67
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-city"></i>
+                            <div>
+                                <strong>Новосибирск:</strong><br>
+                                Красный пр., д. 18, тел: +7 (383) 123-45-67
+                            </div>
+                        </div>
+                        <div class="contact-info-item">
+                            <i class="fas fa-city"></i>
+                            <div>
+                                <strong>Екатеринбург:</strong><br>
+                                ул. Ленина, д. 25, тел: +7 (343) 123-45-67
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://yandex.ru/map-widget/v1/?um=constructor%3A123456789&source=constructor" width="100%" height="400" frameborder="0" allowfullscreen></iframe>
+            </div>
+
+            <div class="contact-card" style="margin-bottom: 40px;">
+                <h2><i class="fas fa-paper-plane"></i> Реквизиты компании</h2>
+                <p><strong>Полное наименование:</strong> ООО "БГП Групп"</p>
+                <p><strong>ИНН/КПП:</strong> 7701234567 / 770101001</p>
+                <p><strong>ОГРН:</strong> 1234567890123</p>
+                <p><strong>Юридический адрес:</strong> 125009, г. Москва, ул. Тверская, д. 15, офис 501</p>
+                <p><strong>Банковские реквизиты:</strong> АО "Тинькофф Банк", р/с 40702810123456789012, к/с 30101810145250000123, БИК 044525123</p>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>

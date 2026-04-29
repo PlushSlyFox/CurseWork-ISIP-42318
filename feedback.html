@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Обратная связь - БГП по РФ</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .feedback-form {
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 40px;
+            margin: 40px auto;
+            max-width: 600px;
+        }
+        .rating-stars {
+            display: flex;
+            gap: 10px;
+            margin: 10px 0;
+        }
+        .rating-stars i {
+            font-size: 30px;
+            cursor: pointer;
+            color: var(--text-gray);
+            transition: var(--transition);
+        }
+        .rating-stars i:hover,
+        .rating-stars i.active {
+            color: var(--yellow-main);
+        }
+        .form-group textarea {
+            resize: vertical;
+            min-height: 120px;
+        }
+    </style>
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="feedback-form">
+                <h1 style="text-align: center; margin-bottom: 30px;"><i class="fas fa-comment-dots"></i> Обратная связь</h1>
+                
+                <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                <form id="feedbackForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-user"></i> Ваше имя</label>
+                        <input type="text" id="name" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-envelope"></i> Email для ответа</label>
+                        <input type="email" id="email" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-tag"></i> Тема обращения</label>
+                        <select id="subject" required>
+                            <option value="">Выберите тему</option>
+                            <option value="question">Вопрос о заказе</option>
+                            <option value="complaint">Жалоба</option>
+                            <option value="suggestion">Предложение</option>
+                            <option value="partnership">Сотрудничество</option>
+                            <option value="other">Другое</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-star"></i> Оцените нашу работу</label>
+                        <div class="rating-stars">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                        </div>
+                        <input type="hidden" id="rating" value="0">
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Сообщение</label>
+                        <textarea id="message" placeholder="Опишите вашу проблему или предложение..." required></textarea>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block">
+                        <i class="fas fa-paper-plane"></i> ОТПРАВИТЬ
+                    </button>
+                </form>
+
+                <div style="margin-top: 30px; text-align: center;">
+                    <p>Или свяжитесь с нами напрямую:</p>
+                    <p><i class="fas fa-phone"></i> <a href="tel:+78005553535">8 (800) 555-35-35</a></p>
+                    <p><i class="fas fa-envelope"></i> <a href="mailto:support@bgp-rf.ru">support@bgp-rf.ru</a></p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Rating stars
+        const stars = document.querySelectorAll('.rating-stars i');
+        const ratingInput = document.getElementById('rating');
+
+        stars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.dataset.rating);
+                ratingInput.value = rating;
+                
+                stars.forEach(s => {
+                    const starRating = parseInt(s.dataset.rating);
+                    if (starRating <= rating) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Feedback form submit
+        document.getElementById('feedbackForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const subject = document.getElementById('subject').value;
+            const rating = document.getElementById('rating').value;
+            const message = document.getElementById('message').value.trim();
+            
+            if (!name || !email || !subject || !message) {
+                showAlert('Заполните все поля', 'error');
+                return;
+            }
+            
+            if (!rating || rating === '0') {
+                showAlert('Пожалуйста, оцените нашу работу', 'error');
+                return;
+            }
+            
+            // Save feedback to localStorage
+            const feedbacks = JSON.parse(localStorage.getItem('feedbacks') || '[]');
+            feedbacks.push({
+                id: Date.now(),
+                name: name,
+                email: email,
+                subject: subject,
+                rating: rating,
+                message: message,
+                date: new Date().toISOString()
+            });
+            localStorage.setItem('feedbacks', JSON.stringify(feedbacks));
+            
+            showAlert('Спасибо за обращение! Мы ответим вам в ближайшее время.', 'success');
+            
+            setTimeout(() => {
+                document.getElementById('feedbackForm').reset();
+                ratingInput.value = 0;
+                stars.forEach(s => s.classList.remove('active'));
+            }, 2000);
+        });
+        
+        // Autofill if logged in
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = auth.getCurrentUser();
+            if (user) {
+                document.getElementById('name').value = user.name || '';
+                document.getElementById('email').value = user.email || '';
+            }
+        });
+    </script>
+</body>
+</html>

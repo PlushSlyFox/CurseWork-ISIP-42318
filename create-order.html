@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>БГП - Создание заявки</title>
+    <link rel="icon" type="image/x-icon" href="assets/favicon.ico">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div id="header-placeholder"></div>
+
+    <main>
+        <div class="container">
+            <div class="form-container">
+                <h1><i class="fas fa-plus-circle"></i> СОЗДАТЬ ЗАЯВКУ</h1>
+                
+                <div id="alertMessage" class="alert" style="display: none;"></div>
+
+                <form id="orderForm">
+                    <div class="form-group">
+                        <label><i class="fas fa-map-marker-alt"></i> Откуда (город/адрес)</label>
+                        <input type="text" id="pickup" placeholder="Москва, ул. Тверская 1" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-flag-checkered"></i> Куда (город/адрес)</label>
+                        <input type="text" id="delivery" placeholder="Санкт-Петербург, Невский пр. 10" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="half">
+                            <div class="form-group">
+                                <label><i class="fas fa-weight-hanging"></i> Вес груза (кг)</label>
+                                <input type="number" id="weight" placeholder="500" required min="1" value="100">
+                            </div>
+                        </div>
+                        <div class="half">
+                            <div class="form-group">
+                                <label><i class="fas fa-truck"></i> Тип транспорта</label>
+                                <select id="vehicle">
+                                    <option value="gas">Газель (до 1.5т)</option>
+                                    <option value="small_truck">ЗИЛ/Бычок (до 3т)</option>
+                                    <option value="large_truck">Фура (до 20т)</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fas fa-align-left"></i> Описание груза</label>
+                        <textarea id="description" rows="3" placeholder="Опишите груз, особенности перевозки..."></textarea>
+                    </div>
+
+                    <div id="pricePreview" class="price-card" style="display: none;">
+                        <div class="price-label">Предварительная стоимость:</div>
+                        <div class="price-value" id="estimatedPrice">0 ₽</div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-block" id="submitBtn">
+                        <i class="fas fa-check"></i> СОЗДАТЬ ЗАЯВКУ
+                    </button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+
+    <script src="js/database.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        function calculatePrice() {
+            const weight = parseFloat(document.getElementById('weight').value) || 0;
+            const pickup = document.getElementById('pickup').value.trim();
+            const delivery = document.getElementById('delivery').value.trim();
+            const vehicle = document.getElementById('vehicle').value;
+            
+            let basePrice = 35;
+            if (vehicle === 'gas') basePrice = 35;
+            else if (vehicle === 'small_truck') basePrice = 55;
+            else if (vehicle === 'large_truck') basePrice = 90;
+            
+            let distance = 500;
+            if (pickup && delivery) {
+                const cities = {
+                    'москва': 0, 'санкт-петербург': 700, 'питер': 700,
+                    'казань': 800, 'новосибирск': 3300, 'екатеринбург': 1800,
+                    'нижний новгород': 400, 'ростов': 1100, 'самара': 1100
+                };
+                
+                let pickupCity = pickup.toLowerCase();
+                let deliveryCity = delivery.toLowerCase();
+                let distance1 = 0, distance2 = 0;
+                
+                for (let [city, dist] of Object.entries(cities)) {
+                    if (pickupCity.includes(city)) distance1 = dist;
+                    if (deliveryCity.includes(city)) distance2 = dist;
+                }
+                
+                distance = Math.abs(distance2 - distance1);
+                if (distance < 100) distance = Math.floor(Math.random() * 400) + 100;
+            } else {
+                distance = Math.floor(Math.random() * 500) + 100;
+            }
+            
+            let price = distance * basePrice + weight * 10;
+            price = Math.ceil(price / 100) * 100;
+            
+            const pricePreview = document.getElementById('pricePreview');
+            const estimatedPrice = document.getElementById('estimatedPrice');
+            
+            if (price > 0 && pickup && delivery && weight > 0) {
+                pricePreview.style.display = 'block';
+                estimatedPrice.textContent = price.toLocaleString('ru-RU') + ' ₽';
+            } else {
+                pricePreview.style.display = 'none';
+            }
+            
+            return price;
+        }
+        
+        document.getElementById('weight').addEventListener('input', calculatePrice);
+        document.getElementById('pickup').addEventListener('input', calculatePrice);
+        document.getElementById('delivery').addEventListener('input', calculatePrice);
+        document.getElementById('vehicle').addEventListener('change', calculatePrice);
+        
+        setTimeout(calculatePrice, 100);
+        
+        document.getElementById('orderForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const submitBtn = document.getElementById('submitBtn');
+            
+            try {
+                const user = auth.getCurrentUser();
+                if (!user) {
+                    showAlert('Необходимо авторизоваться', 'error');
+                    setTimeout(() => window.location.href = 'login.html', 1500);
+                    return;
+                }
+                
+                if (user.role !== 'customer') {
+                    showAlert('Только заказчики могут создавать заказы', 'error');
+                    return;
+                }
+                
+                const pickup = document.getElementById('pickup').value.trim();
+                const delivery = document.getElementById('delivery').value.trim();
+                const weight = parseFloat(document.getElementById('weight').value);
+                const vehicle = document.getElementById('vehicle').value;
+                const description = document.getElementById('description').value.trim();
+                
+                if (!pickup) {
+                    showAlert('Укажите место отправления', 'error');
+                    return;
+                }
+                
+                if (!delivery) {
+                    showAlert('Укажите место назначения', 'error');
+                    return;
+                }
+                
+                if (!weight || weight <= 0) {
+                    showAlert('Укажите корректный вес груза', 'error');
+                    return;
+                }
+                
+                const price = calculatePrice();
+                if (!price) {
+                    showAlert('Заполните все поля', 'error');
+                    return;
+                }
+                
+                submitBtn.disabled = true;
+                submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> СОЗДАНИЕ...';
+                
+                const orderData = {
+                    customerId: parseInt(user.id),
+                    pickup: pickup,
+                    delivery: delivery,
+                    weight: weight,
+                    vehicle: vehicle,
+                    description: description,
+                    price: price,
+                    status: 'pending'
+                };
+                
+                await db.init();
+                const orderId = await db.addOrder(orderData);
+                console.log('Order created:', orderId);
+                
+                showAlert('Заявка успешно создана! Перевозчики скоро увидят ваш заказ', 'success');
+                
+                setTimeout(() => {
+                    window.location.href = 'my-orders.html';
+                }, 2000);
+                
+            } catch (error) {
+                console.error('Create order error:', error);
+                showAlert('Ошибка при создании заявки: ' + error.message, 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = '<i class="fas fa-check"></i> СОЗДАТЬ ЗАЯВКУ';
+            }
+        });
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            await db.init();
+            const user = auth.getCurrentUser();
+            if (!user) {
+                showAlert('Для создания заявки необходимо войти в систему', 'error');
+                setTimeout(() => {
+                    window.location.href = 'login.html';
+                }, 2000);
+            } else if (user.role !== 'customer') {
+                showAlert('Только заказчики могут создавать заказы', 'error');
+                setTimeout(() => {
+                    window.location.href = 'available-orders.html';
+                }, 2000);
+            }
+        });
+    </script>
+</body>
+</html>
